@@ -11,6 +11,8 @@ export default function Cocina() {
 
   const porPrecio: Record<string, number> = {};
   filas.forEach(f => { porPrecio[f.precio_unitario] = (porPrecio[f.precio_unitario] ?? 0) + Number(f.cantidad); });
+  const porClase: Record<string, number> = {};
+  filas.forEach(f => { const k = String(f.descripcion).replace(/^Paches\s*/i, '') || 'Paches'; porClase[k] = (porClase[k] ?? 0) + Number(f.cantidad); });
   const total = filas.reduce((s, f) => s + Number(f.cantidad), 0);
 
   const porCliente: Record<string, { nombre: string; lineas: any[] }> = {};
@@ -29,6 +31,11 @@ export default function Cocina() {
         <div className="text-lg">Total por preparar</div>
         <div className="text-4xl font-extrabold">{total}</div>
         <div className="text-xl mt-1">{Object.entries(porPrecio).map(([p, n]) => `${n} a Q${Number(p)}`).join(' · ') || '—'}</div>
+        {Object.keys(porClase).length > 0 && (
+          <div className="mt-3 pt-3 border-t border-white/30 space-y-1">
+            {Object.entries(porClase).map(([k, n]) => <div key={k} className="flex justify-between text-xl"><span>{k}</span><b>{n}</b></div>)}
+          </div>
+        )}
       </Tarjeta>
       <BotonLink to="/entregas" tono="borde">📦 Ver lo que ya está preparado</BotonLink>
 

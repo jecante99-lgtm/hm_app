@@ -6,14 +6,22 @@ import { dinero, hoy, num, uuid } from '../lib/format';
 import ClienteRapido from '../components/ClienteRapido';
 import { Boton, Campo, Entrada, Selector, Tarjeta, Titulo, Aviso } from '../components/ui';
 
-type Fila = { cantidad: string; precio: string; nota: string };
-const fila = (): Fila => ({ cantidad: '', precio: '8', nota: '' });
+const VARIANTES = [
+  { clave: 'Pollo picante', icono: '🐔🌶️' },
+  { clave: 'Pollo no picante', icono: '🐔' },
+  { clave: 'Cerdo picante', icono: '🐷🌶️' },
+  { clave: 'Cerdo no picante', icono: '🐷' },
+];
 
 export default function PedidoPaches() {
   const nav = useNavigate();
   const [params] = useSearchParams();
   const [clienteId, setClienteId] = useState(params.get('cliente') ?? '');
-  const [filas, setFilas] = useState<Fila[]>([fila()]);
+  const [cant, setCant] = useState<Record<string, number>>({});
+  const [precios, setPrecios] = useState<Record<string, string>>({});
+  const [nota, setNota] = useState('');
+  const cambiar = (k: string, d: number) => setCant(c => ({ ...c, [k]: Math.max(0, (c[k] ?? 0) + d) }));
+  const precioDe = (k: string) => precios[k] ?? '8';
   const [entrega, setEntrega] = useState(hoy());
   const [costo, setCosto] = useState('');
   const [adelanto, setAdelanto] = useState('');
@@ -29,26 +37,24 @@ export default function PedidoPaches() {
   });
   const categoria = datos?.categorias[0];
 
-  const set = (i: number, k: keyof Fila, v: string) => setFilas(fs => fs.map((f, j) => (j === i ? { ...f, [k]: v } : f)));
-  const total = filas.reduce((s, f) => s + num(f.cantidad) * num(f.precio), 0);
-  const piezas = filas.reduce((s, f) => s + num(f.cantidad), 0);
+  const total = VARIANTES.reduce((t, v) => t + (cant[v.clave] ?? 0) * num(precioDe(v.clave)), 0);
+  const piezas = VARIANTES.reduce((t, v) => t + (cant[v.clave] ?? 0), 0);
 
   async function guardar() {
     setError('');
     if (!clienteId) return setError('Elige el cliente');
     if (!categoria) return setError('No hay categoría de paches. Revisa Ajustes.');
-    const validas = filas.filter(f => num(f.cantidad) > 0);
-    if (!validas.length) return setError('Escribe cuántos paches');
-    if (validas.some(f => num(f.precio) <= 0)) return setError('Falta el precio');
+    const validas = VARIANTES.filter(v => (cant[v.clave] ?? 0) > 0);
+    if (!validas.length) return setError('Agrega cuántos paches con los botones + y −');
     if (num(adelanto) > total) return setError('El adelanto es mayor que el total');
     setGuardando(true);
     try {
       const r = await llamar('crear_venta', {
         p_id: uuid(), p_cliente_id: clienteId, p_categoria_id: categoria.id, p_fecha: hoy(),
-        p_fecha_promesa: null, p_fecha_entrega: entrega || null, p_notas: null,
-        p_lineas: validas.map(f => ({
-          descripcion: f.nota.trim() ? `Paches ${f.nota.trim()}` : 'Paches',
-          cantidad: num(f.cantidad), costo_unitario: num(costo), precio_unitario: num(f.precio), medio_compra: '', tarjeta_id: '',
+        p_fecha_promesa: null, p_fecha_entrega: entrega || null, p_notas: nota.trim() || null,
+        p_lineas: validas.map(v => ({
+          descripcion: `Paches ${v.clave}`,
+          cantidad: cant[v.clave], costo_unitario: num(costo), precio_unitario: num(precioDe(v.clave)), medio_compra: '', tarjeta_id: '',
         })),
         p_pago_inicial: num(adelanto), p_pago_metodo: 'efectivo', p_pago_id: uuid(),
       });
@@ -69,30 +75,32 @@ export default function PedidoPaches() {
       </Campo>
       <ClienteRapido alCrear={async id => { await recargar(); setClienteId(id); }} />
 
-      {filas.map((f, i) => (
-        <Tarjeta key={i} className="space-y-3">
-          <Campo etiqueta="¿Cuántos paches?">
-            <Entrada inputMode="numeric" placeholder="Ej. 20" value={f.cantidad} onChange={e => set(i, 'cantidad', e.target.value)} />
-          </Campo>
-          <div>
-            <span className="block font-bold mb-1">Precio de cada uno</span>
+      {VARIANTES.map(v => {
+        const n = cant[v.clave] ?? 0;
+        return (
+          <Tarjeta key={v.clave} className={`space-y-3 ${n > 0 ? '!border-marca border-2' : ''}`}>
+            <div className="flex items-center justify-between">
+              <b className="text-xl">{v.icono} {v.clave}</b>
+              <b className="text-lg text-slate-600">{dinero(n * num(precioDe(v.clave)))}</b>
+            </div>
+            <div className="flex items-center justify-between gap-2">
+              <button aria-label="Quitar uno" onClick={() => cambiar(v.clave, -1)} className="w-16 h-16 rounded-2xl bg-slate-200 text-4xl font-extrabold active:bg-slate-300">−</button>
+              <div className="text-5xl font-extrabold min-w-16 text-center">{n}</div>
+              <button aria-label="Agregar uno" onClick={() => cambiar(v.clave, 1)} className="w-16 h-16 rounded-2xl bg-marca text-white text-4xl font-extrabold active:bg-marca-osc">+</button>
+              <button aria-label="Agregar cinco" onClick={() => cambiar(v.clave, 5)} className="h-16 px-3 rounded-2xl bg-green-600 text-white text-xl font-extrabold active:bg-green-700">+5</button>
+            </div>
             <div className="grid grid-cols-2 gap-2">
               {['8', '10'].map(p => (
-                <button key={p} onClick={() => set(i, 'precio', p)}
-                  className={`min-h-16 rounded-2xl text-2xl font-extrabold border-2 ${f.precio === p ? 'bg-marca text-white border-marca' : 'bg-white text-slate-900 border-slate-300'}`}>Q{p}</button>
+                <button key={p} onClick={() => setPrecios(x => ({ ...x, [v.clave]: p }))}
+                  className={`min-h-12 rounded-xl text-xl font-extrabold border-2 ${precioDe(v.clave) === p ? 'bg-marca text-white border-marca' : 'bg-white text-slate-900 border-slate-300'}`}>Q{p} c/u</button>
               ))}
             </div>
-          </div>
-          <Campo etiqueta="Nota (opcional)"><Entrada placeholder="Ej. de pollo, sin picante" value={f.nota} onChange={e => set(i, 'nota', e.target.value)} /></Campo>
-          <div className="flex justify-between items-center">
-            <b className="text-lg">{dinero(num(f.cantidad) * num(f.precio))}</b>
-            {filas.length > 1 && <button className="text-red-600 font-bold p-2" onClick={() => setFilas(fs => fs.filter((_, j) => j !== i))}>Quitar</button>}
-          </div>
-        </Tarjeta>
-      ))}
-      <Boton tono="borde" className="w-full" onClick={() => setFilas(fs => [...fs, fila()])}>➕ Otro precio u otra clase</Boton>
+          </Tarjeta>
+        );
+      })}
 
       <Campo etiqueta="¿Para cuándo se entrega?"><Entrada type="date" value={entrega} onChange={e => setEntrega(e.target.value)} /></Campo>
+      <Campo etiqueta="Nota del pedido (opcional)"><Entrada placeholder="Ej. entregar por la tarde" value={nota} onChange={e => setNota(e.target.value)} /></Campo>
       <Campo etiqueta="Me cuesta cada uno (opcional)"><Entrada inputMode="decimal" placeholder="Q0.00" value={costo} onChange={e => setCosto(e.target.value)} /></Campo>
       <Campo etiqueta="¿Dejó adelanto? (opcional)"><Entrada inputMode="decimal" placeholder="Q0.00" value={adelanto} onChange={e => setAdelanto(e.target.value)} /></Campo>
 
