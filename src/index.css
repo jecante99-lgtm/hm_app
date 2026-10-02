@@ -8,3 +8,10 @@
 html { font-size: 20px; }
 body { background: #f8fafc; color: #0f172a; -webkit-tap-highlight-color: transparent; }
 input, select, textarea { font-size: 1rem; }
+
+:root { color-scheme: light; }
+input, select, textarea, option { color: #0f172a; background-color: #fff; }
+input::placeholder { color: #94a3b8; }
+input, select, textarea { min-width: 0; max-width: 100%; text-overflow: ellipsis; }
+select { appearance: auto; }
+button { cursor: pointer; }

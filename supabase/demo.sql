@@ -12,7 +12,7 @@ begin
   if exists (select 1 from clientes where nombre = 'María López (demo)') then return; end if;
   select id into cz from categorias where nombre='Zapatos';
   select id into cb from categorias where nombre='Betterware';
-  select id into cp from categorias where nombre='Parches';
+  select id into cp from categorias where nombre='Paches';
 
   insert into clientes (id,nombre,telefono,direccion) values
     (c1,'María López (demo)','5551110001','Calle Rosas 12'),
@@ -35,9 +35,9 @@ begin
     (v1,'Botas café #25',1,600,900,'efectivo'),
     (v2,'Organizador cocina',2,90,150,'efectivo'),
     (v3,'Zapato escolar #22',1,250,400,'efectivo'),
-    (v4,'Parches grandes',20,4,8,null),
-    (v4,'Parches especiales',12,5,10,null),
-    (v5,'Parches grandes',15,4,8,null);
+    (v4,'Paches grandes',20,4,8,null),
+    (v4,'Paches especiales',12,5,10,null),
+    (v5,'Paches grandes',15,4,8,null);
 
   insert into pagos (id,cliente_id,fecha,monto,metodo) values (p1,c1,current_date-8,800,'efectivo');
   insert into pago_aplicaciones (pago_id,venta_id,monto) values (p1,v1,800);

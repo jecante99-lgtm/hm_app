@@ -19,7 +19,7 @@ export default function Entregas() {
 
   return (
     <div className="space-y-3">
-      <Titulo atras={esAdmin ? '/parches' : undefined}>Por entregar</Titulo>
+      <Titulo atras={esAdmin ? '/paches' : undefined}>Por entregar</Titulo>
       {Object.entries(grupos).map(([cid, g]) => (
         <Tarjeta key={cid} className="space-y-2">
           <b className="text-2xl">{g.c.cliente_nombre}</b>

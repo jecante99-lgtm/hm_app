@@ -8,7 +8,7 @@ supabase/migrations/   001 tablas+triggers+auditoría · 002 vistas · 003 funci
 supabase/demo.sql      datos de prueba (opcional)
 scripts/               migrate.mjs (aplica el SQL) · crear-usuario.mjs
 src/lib/               supabase, auth, offline (cola + caché), format
-src/pages/             Inicio, Clientes, Ficha, Nueva venta, Pago, Por cobrar, Parches, Entregas, Reportes, Ajustes
+src/pages/             Inicio, Clientes, Ficha, Nueva venta, Pago, Por cobrar, Paches, Entregas, Reportes, Ajustes
 ```
 Roles: `admin` (todo) y `ayudante` (solo `v_entregas` + `marcar_entregado`). Ver `DECISIONES.md`.
 

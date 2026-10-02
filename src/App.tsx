@@ -9,6 +9,7 @@ import ClienteFicha from './pages/ClienteFicha';
 import NuevaVenta from './pages/NuevaVenta';
 import RegistrarPago from './pages/RegistrarPago';
 import PorCobrar from './pages/PorCobrar';
+import PedidoPaches from './pages/PedidoPaches';
 import Cocina from './pages/Cocina';
 import Entregas from './pages/Entregas';
 import Reportes from './pages/Reportes';
@@ -34,7 +35,8 @@ export default function App() {
         <Route path="/venta/nueva" element={<NuevaVenta />} />
         <Route path="/pago/nuevo" element={<RegistrarPago />} />
         <Route path="/por-cobrar" element={<PorCobrar />} />
-        <Route path="/parches" element={<Cocina />} />
+        <Route path="/paches" element={<Cocina />} />
+        <Route path="/paches/nuevo" element={<PedidoPaches />} />
         <Route path="/entregas" element={<Entregas />} />
         <Route path="/reportes" element={<Reportes />} />
         <Route path="/mas" element={<Mas />} />

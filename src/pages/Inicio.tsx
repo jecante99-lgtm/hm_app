@@ -35,6 +35,7 @@ export default function Inicio() {
       </Tarjeta>
 
       <div className="grid grid-cols-1 gap-3">
+        <BotonLink to="/paches/nuevo" tono="verde">🫔 Anotar pedido de paches</BotonLink>
         <BotonLink to="/venta/nueva" tono="verde">➕ Nueva venta</BotonLink>
         <BotonLink to="/pago/nuevo" tono="marca">💵 Registrar pago</BotonLink>
         <BotonLink to="/clientes?nuevo=1" tono="borde">👤 Nuevo cliente</BotonLink>
@@ -46,7 +47,7 @@ export default function Inicio() {
       </Tarjeta>
 
       <Tarjeta>
-        <div className="text-slate-600 mb-1">Parches</div>
+        <div className="text-slate-600 mb-1">🫔 Paches</div>
         <div className="flex justify-between text-xl"><span>Por preparar</span><b>{d.porPreparar}</b></div>
         <div className="flex justify-between text-xl"><span>Por entregar</span><b>{d.porEntregar}</b></div>
       </Tarjeta>

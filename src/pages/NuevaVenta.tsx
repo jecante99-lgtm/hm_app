@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useData, q, llamar } from '../lib/offline';
 import { dinero, hoy, num, uuid } from '../lib/format';
+import ClienteRapido from '../components/ClienteRapido';
 import { Boton, Campo, Entrada, Selector, Tarjeta, Titulo, Aviso } from '../components/ui';
 
 type Linea = { descripcion: string; cantidad: string; costo: string; precio: string };
@@ -23,7 +24,7 @@ export default function NuevaVenta() {
   const [error, setError] = useState('');
   const [guardando, setGuardando] = useState(false);
 
-  const { datos } = useData('catalogos_venta', async () => {
+  const { datos, recargar } = useData('catalogos_venta', async () => {
     const [clientes, categorias, tarjetas] = await Promise.all([
       q<any[]>(supabase.from('clientes').select('id,nombre').eq('activo', true).is('deleted_at', null).order('nombre')),
       q<any[]>(supabase.from('categorias').select('*').eq('activa', true).order('nombre')),
@@ -32,7 +33,7 @@ export default function NuevaVenta() {
     return { clientes, categorias, tarjetas };
   });
   const cat = datos?.categorias.find(c => c.id === categoriaId);
-  const esParches = Boolean(cat?.genera_pedido);
+  const esPaches = Boolean(cat?.genera_pedido);
 
   const setL = (i: number, k: keyof Linea, v: string) => setLineas(ls => ls.map((l, j) => (j === i ? { ...l, [k]: v } : l)));
   const totPrecio = lineas.reduce((s, l) => s + num(l.cantidad) * num(l.precio), 0);
@@ -71,6 +72,7 @@ export default function NuevaVenta() {
           {datos?.clientes.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
         </Selector>
       </Campo>
+      <ClienteRapido alCrear={async id => { await recargar(); setClienteId(id); }} />
 
       <div>
         <span className="block font-bold mb-1">Categoría</span>
@@ -88,12 +90,12 @@ export default function NuevaVenta() {
       {lineas.map((l, i) => (
         <Tarjeta key={i} className="space-y-3">
           <Campo etiqueta="¿Qué se llevó?"><Entrada placeholder="Ej. Tenis Nike #26 negro" value={l.descripcion} onChange={e => setL(i, 'descripcion', e.target.value)} /></Campo>
-          <div className="grid grid-cols-3 gap-2">
-            <Campo etiqueta="Cantidad"><Entrada inputMode="decimal" value={l.cantidad} onChange={e => setL(i, 'cantidad', e.target.value)} /></Campo>
-            <Campo etiqueta="Me costó"><Entrada inputMode="decimal" placeholder="$" value={l.costo} onChange={e => setL(i, 'costo', e.target.value)} /></Campo>
-            <Campo etiqueta="Cobro"><Entrada inputMode="decimal" placeholder="$" value={l.precio} onChange={e => setL(i, 'precio', e.target.value)} /></Campo>
+          <div className="grid grid-cols-3 gap-2 [&_span]:text-base">
+            <Campo etiqueta="Cantidad"><Entrada className="!px-2" inputMode="decimal" value={l.cantidad} onChange={e => setL(i, 'cantidad', e.target.value)} /></Campo>
+            <Campo etiqueta="Me costó"><Entrada className="!px-2" inputMode="decimal" placeholder="$" value={l.costo} onChange={e => setL(i, 'costo', e.target.value)} /></Campo>
+            <Campo etiqueta="Cobro"><Entrada className="!px-2" inputMode="decimal" placeholder="$" value={l.precio} onChange={e => setL(i, 'precio', e.target.value)} /></Campo>
           </div>
-          {esParches && (
+          {esPaches && (
             <div className="grid grid-cols-2 gap-2">
               {[8, 10].map(p => <Boton key={p} tono={num(l.precio) === p ? 'marca' : 'borde'} onClick={() => setL(i, 'precio', String(p))}>${p}</Boton>)}
             </div>
@@ -125,7 +127,7 @@ export default function NuevaVenta() {
       )}
       <Campo etiqueta="¿Pagó algo ahora? (opcional)"><Entrada inputMode="decimal" placeholder="$0.00" value={pagoInicial} onChange={e => setPagoInicial(e.target.value)} /></Campo>
       <Campo etiqueta="¿Cuándo dice que paga? (opcional)"><Entrada type="date" value={promesa} onChange={e => setPromesa(e.target.value)} /></Campo>
-      {esParches && <Campo etiqueta="Fecha de entrega"><Entrada type="date" value={entrega} onChange={e => setEntrega(e.target.value)} /></Campo>}
+      {esPaches && <Campo etiqueta="Fecha de entrega"><Entrada type="date" value={entrega} onChange={e => setEntrega(e.target.value)} /></Campo>}
 
       {error && <Aviso>{error}</Aviso>}
       <Boton tono="verde" className="w-full" disabled={guardando} onClick={guardar}>{guardando ? 'Guardando…' : '✔ Guardar venta'}</Boton>

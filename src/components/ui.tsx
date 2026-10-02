@@ -11,7 +11,7 @@ export function Boton({ tono = 'marca', className = '', ...p }: ButtonHTMLAttrib
     gris: 'bg-slate-200 text-slate-900 active:bg-slate-300',
     borde: 'bg-white text-marca border-2 border-marca',
   }[tono];
-  return <button {...p} className={`min-h-14 px-5 rounded-2xl font-bold text-lg disabled:opacity-50 ${t} ${className}`} />;
+  return <button {...p} className={`min-h-14 px-5 rounded-2xl font-bold text-lg leading-tight disabled:opacity-50 ${t} ${className}`} />;
 }
 
 export function BotonLink({ to, children, tono = 'marca', className = '' }: { to: string; children: ReactNode; tono?: 'marca' | 'gris' | 'verde' | 'borde'; className?: string }) {
@@ -27,7 +27,7 @@ export function Campo({ etiqueta, children }: { etiqueta: string; children: Reac
   return <label className="block"><span className="block font-bold mb-1">{etiqueta}</span>{children}</label>;
 }
 
-const base = 'w-full min-h-14 px-4 rounded-xl border-2 border-slate-300 bg-white focus:border-marca outline-none';
+const base = 'w-full min-h-14 px-4 rounded-xl border-2 border-slate-300 bg-white text-slate-900 focus:border-marca outline-none';
 export const Entrada = (p: InputHTMLAttributes<HTMLInputElement>) => <input {...p} className={`${base} ${p.className ?? ''}`} />;
 export const Selector = (p: React.SelectHTMLAttributes<HTMLSelectElement>) => <select {...p} className={`${base} ${p.className ?? ''}`} />;
 
@@ -74,7 +74,7 @@ const itemsAdmin = [
   { to: '/', icono: '🏠', txt: 'Inicio' },
   { to: '/clientes', icono: '👥', txt: 'Clientes' },
   { to: '/por-cobrar', icono: '💰', txt: 'Cobrar' },
-  { to: '/parches', icono: '🧁', txt: 'Parches' },
+  { to: '/paches', icono: '🫔', txt: 'Paches' },
   { to: '/mas', icono: '☰', txt: 'Más' },
 ];
 

@@ -23,7 +23,8 @@ export default function Cocina() {
 
   return (
     <div className="space-y-3">
-      <Titulo>Parches por preparar</Titulo>
+      <Titulo>🫔 Paches</Titulo>
+      <BotonLink to="/paches/nuevo" tono="verde" className="!min-h-20 !text-2xl">➕ Anotar pedido de paches</BotonLink>
       <Tarjeta className="bg-marca text-white border-0">
         <div className="text-lg">Total por preparar</div>
         <div className="text-4xl font-extrabold">{total}</div>
@@ -43,7 +44,7 @@ export default function Cocina() {
           {c.lineas.length > 1 && <Boton tono="verde" className="w-full" onClick={() => preparar(c.lineas.map(l => l.linea_id))}>✔ Todo de {c.nombre} listo</Boton>}
         </Tarjeta>
       ))}
-      {!filas.length && <p className="text-center text-slate-500 py-6">No hay parches pendientes.</p>}
+      {!filas.length && <p className="text-center text-slate-500 py-6">No hay paches pendientes.</p>}
     </div>
   );
 }
