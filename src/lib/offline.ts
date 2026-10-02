@@ -72,7 +72,7 @@ export function useEstadoRed() {
 
 /* ---------- Lectura con caché local (se ve sin internet) ---------- */
 export function useData<T>(clave: string, cargar: () => Promise<T>, deps: unknown[] = []) {
-  const ck = 'cache_v1_' + clave;
+  const ck = 'cache_v2_' + clave;
   const [datos, setDatos] = useState<T | null>(() => {
     try { const s = localStorage.getItem(ck); return s ? JSON.parse(s) : null; } catch { return null; }
   });

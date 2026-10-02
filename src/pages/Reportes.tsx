@@ -23,7 +23,8 @@ export default function Reportes() {
     return { ventas, costos };
   });
   if (cargando && !datos) return <Cargando />;
-  const { ventas, costos } = datos!;
+  if (!datos) return <p className="text-lg text-red-700">No se pudo cargar. Revisa tu conexión.</p>;
+  const { ventas, costos } = datos;
 
   const lunesHoy = lunes(hoy());
   let desde = '0000-01-01', hasta = '9999-12-31', titulo = 'Todo el tiempo', esSemana = false;

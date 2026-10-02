@@ -4,7 +4,7 @@ import { dinero, hoy } from '../lib/format';
 import { BotonLink, Tarjeta, Cargando } from '../components/ui';
 
 export default function Inicio() {
-  const { datos, cargando } = useData('inicio', async () => {
+  const { datos, cargando, error } = useData('inicio', async () => {
     const mes = hoy().slice(0, 7) + '-01';
     const en7 = new Date(Date.now() + 7 * 864e5).toISOString().slice(0, 10);
     const [saldos, ventas, cocina, entregas, gan, abiertas] = await Promise.all([
@@ -30,7 +30,8 @@ export default function Inicio() {
   });
 
   if (cargando && !datos) return <Cargando />;
-  const d = datos!;
+  if (!datos) return <p className="text-lg text-red-700">No se pudo cargar. Revisa tu conexión.{error ? ` (${error})` : ''}</p>;
+  const d = datos;
   return (
     <div className="space-y-4">
       <Tarjeta className="bg-marca text-white border-0">
@@ -40,10 +41,10 @@ export default function Inicio() {
 
       <Tarjeta>
         <div className="text-slate-600 mb-1">Me deben por categoría</div>
-        {d.debeCat.map(([n, m]: [string, number]) => (
+        {(d.debeCat ?? []).map(([n, m]: [string, number]) => (
           <div key={n} className="flex justify-between text-xl py-1"><span>{n}</span><b className="text-red-700">{dinero(m)}</b></div>
         ))}
-        {!d.debeCat.length && <div className="text-lg text-green-700 font-bold">Nadie te debe 🎉</div>}
+        {!(d.debeCat ?? []).length && <div className="text-lg text-green-700 font-bold">Nadie te debe 🎉</div>}
       </Tarjeta>
 
       <div className="grid grid-cols-1 gap-3">
