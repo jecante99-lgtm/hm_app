@@ -28,7 +28,7 @@ export default function Entregas() {
           {g.lineas.map(l => (
             <div key={l.linea_id} className="border-t pt-3 space-y-2">
               <div className="text-xl font-semibold">{l.cantidad} × {l.descripcion}</div>
-              <div className="text-slate-600">Cobrar {dinero(l.total_a_cobrar_linea)} · Entrega {fechaCorta(l.fecha_entrega)}</div>
+              <div className="text-slate-600">Cobrar {dinero(l.total_a_cobrar_linea)}{l.fecha_entrega ? ` · Entrega ${fechaCorta(l.fecha_entrega)}` : ""}</div>
               <Boton tono="verde" className="w-full !min-h-16 !text-xl" onClick={() => entregar(l.linea_id)}>✔ Marcar entregado</Boton>
               {esAdmin && <Boton tono="gris" className="w-full" onClick={() => regresar(l.linea_id)}>↩ Regresar a pendiente</Boton>}
             </div>

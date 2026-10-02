@@ -22,9 +22,6 @@ export default function PedidoPaches() {
   const [nota, setNota] = useState('');
   const cambiar = (k: string, d: number) => setCant(c => ({ ...c, [k]: Math.max(0, (c[k] ?? 0) + d) }));
   const precioDe = (k: string) => precios[k] ?? '8';
-  const [entrega, setEntrega] = useState(hoy());
-  const [costo, setCosto] = useState('');
-  const [adelanto, setAdelanto] = useState('');
   const [error, setError] = useState('');
   const [guardando, setGuardando] = useState(false);
 
@@ -46,17 +43,16 @@ export default function PedidoPaches() {
     if (!categoria) return setError('No hay categoría de paches. Revisa Ajustes.');
     const validas = VARIANTES.filter(v => (cant[v.clave] ?? 0) > 0);
     if (!validas.length) return setError('Agrega cuántos paches con los botones + y −');
-    if (num(adelanto) > total) return setError('El adelanto es mayor que el total');
     setGuardando(true);
     try {
       const r = await llamar('crear_venta', {
         p_id: uuid(), p_cliente_id: clienteId, p_categoria_id: categoria.id, p_fecha: hoy(),
-        p_fecha_promesa: null, p_fecha_entrega: entrega || null, p_notas: nota.trim() || null,
+        p_fecha_promesa: null, p_fecha_entrega: null, p_notas: nota.trim() || null,
         p_lineas: validas.map(v => ({
           descripcion: `Paches ${v.clave}`,
-          cantidad: cant[v.clave], costo_unitario: num(costo), precio_unitario: num(precioDe(v.clave)), medio_compra: '', tarjeta_id: '',
+          cantidad: cant[v.clave], costo_unitario: 0, precio_unitario: num(precioDe(v.clave)), medio_compra: '', tarjeta_id: '',
         })),
-        p_pago_inicial: num(adelanto), p_pago_metodo: 'efectivo', p_pago_id: uuid(),
+        p_pago_inicial: 0, p_pago_metodo: 'efectivo', p_pago_id: uuid(),
       });
       if (r.enCola) alert('Sin internet: el pedido quedó guardado y se enviará al reconectar.');
       nav('/paches');
@@ -101,10 +97,7 @@ export default function PedidoPaches() {
       </div>
       <p className="text-slate-600 text-center">El botón <b>Q8 / Q10</b> cambia el precio de cada pache de esa clase.</p>
 
-      <Campo etiqueta="¿Para cuándo se entrega?"><Entrada type="date" value={entrega} onChange={e => setEntrega(e.target.value)} /></Campo>
       <Campo etiqueta="Nota del pedido (opcional)"><Entrada placeholder="Ej. entregar por la tarde" value={nota} onChange={e => setNota(e.target.value)} /></Campo>
-      <Campo etiqueta="Me cuesta cada uno (opcional)"><Entrada inputMode="decimal" placeholder="Q0.00" value={costo} onChange={e => setCosto(e.target.value)} /></Campo>
-      <Campo etiqueta="¿Dejó adelanto? (opcional)"><Entrada inputMode="decimal" placeholder="Q0.00" value={adelanto} onChange={e => setAdelanto(e.target.value)} /></Campo>
 
       <Tarjeta className="bg-slate-50">
         <div className="flex justify-between text-xl"><span>Total de paches</span><b>{piezas}</b></div>

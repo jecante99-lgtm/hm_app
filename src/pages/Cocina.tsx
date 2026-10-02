@@ -5,7 +5,7 @@ import { Boton, BotonLink, Tarjeta, Titulo, Cargando } from '../components/ui';
 
 export default function Cocina() {
   const { datos, cargando, recargar } = useData('cocina', () =>
-    q<any[]>(supabase.from('v_cocina_pendiente').select('*').order('fecha_entrega', { nullsFirst: false })));
+    q<any[]>(supabase.from('v_cocina_pendiente').select('*').order('fecha_entrega', { nullsFirst: false }).order('cliente_nombre')));
   if (cargando && !datos) return <Cargando />;
   const filas = datos ?? [];
 
@@ -44,7 +44,7 @@ export default function Cocina() {
           <b className="text-xl">{c.nombre}</b>
           {c.lineas.map(l => (
             <div key={l.linea_id} className="flex justify-between items-center gap-2 border-t pt-2">
-              <div><div className="font-semibold">{l.cantidad} × {l.descripcion}</div><div className="text-slate-500">a Q{Number(l.precio_unitario)} · entrega {fechaCorta(l.fecha_entrega)}</div></div>
+              <div><div className="font-semibold">{l.cantidad} × {l.descripcion}</div><div className="text-slate-500">a Q{Number(l.precio_unitario)}{l.fecha_entrega ? ` · entrega ${fechaCorta(l.fecha_entrega)}` : ""}</div></div>
               <Boton tono="verde" className="!min-h-12 !px-3" onClick={() => preparar([l.linea_id])}>Listo</Boton>
             </div>
           ))}
