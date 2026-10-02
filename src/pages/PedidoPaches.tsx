@@ -84,9 +84,6 @@ export default function PedidoPaches() {
                 <button aria-label="Quitar uno" onClick={() => cambiar(v.clave, -1)} className="h-14 rounded-xl bg-slate-200 text-4xl font-extrabold active:bg-slate-300">−</button>
                 <button aria-label="Agregar uno" onClick={() => cambiar(v.clave, 1)} className="h-14 rounded-xl bg-marca text-white text-4xl font-extrabold active:bg-marca-osc">+</button>
               </div>
-              <div>
-                <button aria-label="Agregar cinco" onClick={() => cambiar(v.clave, 5)} className="w-full h-11 rounded-xl bg-green-600 text-white text-lg font-extrabold active:bg-green-700">+5</button>
-              </div>
               <div className="text-center text-slate-600 font-bold">{dinero(n * PRECIO)}</div>
             </div>
           );
