@@ -20,7 +20,11 @@ export function BotonLink({ to, children, tono = 'marca', className = '' }: { to
 }
 
 export function Tarjeta({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <div className={`bg-white rounded-2xl shadow-sm border border-slate-200 p-4 ${className}`}>{children}</div>;
+  // Si quien la usa pone su propio fondo/borde, no mezclamos con los de por defecto
+  // (dos clases de fondo a la vez: gana la que Tailwind genere al final, y salía blanco sobre blanco).
+  const fondo = /(^|\s)bg-/.test(className) ? '' : 'bg-white';
+  const borde = /(^|\s)border-/.test(className) ? (/border-\d/.test(className) ? '' : 'border') : 'border border-slate-200';
+  return <div className={`rounded-2xl shadow-sm p-4 ${fondo} ${borde} ${className}`}>{children}</div>;
 }
 
 export function Campo({ etiqueta, children }: { etiqueta: string; children: ReactNode }) {
