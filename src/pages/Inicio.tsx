@@ -39,6 +39,7 @@ export default function Inicio() {
         <BotonLink to="/venta/nueva" tono="verde">➕ Nueva venta</BotonLink>
         <BotonLink to="/pago/nuevo" tono="marca">💵 Registrar pago</BotonLink>
         <BotonLink to="/clientes?nuevo=1" tono="borde">👤 Nuevo cliente</BotonLink>
+        <BotonLink to="/reportes" tono="borde">📊 Ventas y ganancias de la semana</BotonLink>
       </div>
 
       <Tarjeta>

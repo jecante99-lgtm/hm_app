@@ -7,7 +7,7 @@ import ClienteRapido from '../components/ClienteRapido';
 import { Boton, Campo, Entrada, Selector, Tarjeta, Titulo, Aviso } from '../components/ui';
 
 type Fila = { cantidad: string; precio: string; nota: string };
-const fila = (): Fila => ({ cantidad: '', precio: '10', nota: '' });
+const fila = (): Fila => ({ cantidad: '', precio: '8', nota: '' });
 
 export default function PedidoPaches() {
   const nav = useNavigate();

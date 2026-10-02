@@ -78,7 +78,7 @@ export default function NuevaVenta() {
         <span className="block font-bold mb-1">Categoría</span>
         <div className="grid grid-cols-2 gap-2">
           {datos?.categorias.map(c => (
-            <button key={c.id} onClick={() => setCategoriaId(c.id)}
+            <button key={c.id} onClick={() => c.genera_pedido ? nav(`/paches/nuevo${clienteId ? `?cliente=${clienteId}` : ''}`) : setCategoriaId(c.id)}
               className={`min-h-14 rounded-2xl font-bold text-lg border-2 ${categoriaId === c.id ? 'bg-marca text-white border-marca' : 'bg-white border-slate-300'}`}>{c.nombre}</button>
           ))}
         </div>
