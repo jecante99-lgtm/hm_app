@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useData, q, llamar } from '../lib/offline';
-import { dinero, hoy, num, uuid } from '../lib/format';
+import { dinero, hoy, uuid } from '../lib/format';
 import ClienteRapido from '../components/ClienteRapido';
 import { Boton, Campo, Entrada, Selector, Tarjeta, Titulo, Aviso } from '../components/ui';
 
@@ -18,10 +18,9 @@ export default function PedidoPaches() {
   const [params] = useSearchParams();
   const [clienteId, setClienteId] = useState(params.get('cliente') ?? '');
   const [cant, setCant] = useState<Record<string, number>>({});
-  const [precios, setPrecios] = useState<Record<string, string>>({});
   const [nota, setNota] = useState('');
   const cambiar = (k: string, d: number) => setCant(c => ({ ...c, [k]: Math.max(0, (c[k] ?? 0) + d) }));
-  const precioDe = (k: string) => precios[k] ?? '8';
+  const PRECIO = 8; // todos los paches cuestan Q8
   const [error, setError] = useState('');
   const [guardando, setGuardando] = useState(false);
 
@@ -34,7 +33,7 @@ export default function PedidoPaches() {
   });
   const categoria = datos?.categorias[0];
 
-  const total = VARIANTES.reduce((t, v) => t + (cant[v.clave] ?? 0) * num(precioDe(v.clave)), 0);
+  const total = VARIANTES.reduce((t, v) => t + (cant[v.clave] ?? 0) * PRECIO, 0);
   const piezas = VARIANTES.reduce((t, v) => t + (cant[v.clave] ?? 0), 0);
 
   async function guardar() {
@@ -50,7 +49,7 @@ export default function PedidoPaches() {
         p_fecha_promesa: null, p_fecha_entrega: null, p_notas: nota.trim() || null,
         p_lineas: validas.map(v => ({
           descripcion: `Paches ${v.clave}`,
-          cantidad: cant[v.clave], costo_unitario: 0, precio_unitario: num(precioDe(v.clave)), medio_compra: '', tarjeta_id: '',
+          cantidad: cant[v.clave], costo_unitario: 0, precio_unitario: PRECIO, medio_compra: '', tarjeta_id: '',
         })),
         p_pago_inicial: 0, p_pago_metodo: 'efectivo', p_pago_id: uuid(),
       });
@@ -74,7 +73,6 @@ export default function PedidoPaches() {
       <div className="grid grid-cols-2 gap-2">
         {VARIANTES.map(v => {
           const n = cant[v.clave] ?? 0;
-          const p = precioDe(v.clave);
           return (
             <div key={v.clave} className={`rounded-2xl bg-white p-2 space-y-2 shadow-sm ${n > 0 ? 'border-2 border-marca' : 'border-2 border-slate-200'}`}>
               <div className="text-center leading-tight">
@@ -86,16 +84,14 @@ export default function PedidoPaches() {
                 <button aria-label="Quitar uno" onClick={() => cambiar(v.clave, -1)} className="h-14 rounded-xl bg-slate-200 text-4xl font-extrabold active:bg-slate-300">−</button>
                 <button aria-label="Agregar uno" onClick={() => cambiar(v.clave, 1)} className="h-14 rounded-xl bg-marca text-white text-4xl font-extrabold active:bg-marca-osc">+</button>
               </div>
-              <div className="grid grid-cols-2 gap-2">
-                <button aria-label="Agregar cinco" onClick={() => cambiar(v.clave, 5)} className="h-11 rounded-xl bg-green-600 text-white text-lg font-extrabold active:bg-green-700">+5</button>
-                <button aria-label="Cambiar precio" onClick={() => setPrecios(x => ({ ...x, [v.clave]: p === '8' ? '10' : '8' }))} className="h-11 rounded-xl border-2 border-marca text-marca text-lg font-extrabold bg-white">Q{p}</button>
+              <div>
+                <button aria-label="Agregar cinco" onClick={() => cambiar(v.clave, 5)} className="w-full h-11 rounded-xl bg-green-600 text-white text-lg font-extrabold active:bg-green-700">+5</button>
               </div>
-              <div className="text-center text-slate-600 font-bold">{dinero(n * num(p))}</div>
+              <div className="text-center text-slate-600 font-bold">{dinero(n * PRECIO)}</div>
             </div>
           );
         })}
       </div>
-      <p className="text-slate-600 text-center">El botón <b>Q8 / Q10</b> cambia el precio de cada pache de esa clase.</p>
 
       <Campo etiqueta="Nota del pedido (opcional)"><Entrada placeholder="Ej. entregar por la tarde" value={nota} onChange={e => setNota(e.target.value)} /></Campo>
 
