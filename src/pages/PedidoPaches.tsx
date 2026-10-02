@@ -75,29 +75,31 @@ export default function PedidoPaches() {
       </Campo>
       <ClienteRapido alCrear={async id => { await recargar(); setClienteId(id); }} />
 
-      {VARIANTES.map(v => {
-        const n = cant[v.clave] ?? 0;
-        return (
-          <Tarjeta key={v.clave} className={`space-y-3 ${n > 0 ? '!border-marca border-2' : ''}`}>
-            <div className="flex items-center justify-between">
-              <b className="text-xl">{v.icono} {v.clave}</b>
-              <b className="text-lg text-slate-600">{dinero(n * num(precioDe(v.clave)))}</b>
+      <div className="grid grid-cols-2 gap-2">
+        {VARIANTES.map(v => {
+          const n = cant[v.clave] ?? 0;
+          const p = precioDe(v.clave);
+          return (
+            <div key={v.clave} className={`rounded-2xl bg-white p-2 space-y-2 shadow-sm ${n > 0 ? 'border-2 border-marca' : 'border-2 border-slate-200'}`}>
+              <div className="text-center leading-tight">
+                <div className="text-2xl">{v.icono}</div>
+                <div className="font-extrabold">{v.clave}</div>
+              </div>
+              <div className="text-5xl font-extrabold text-center">{n}</div>
+              <div className="grid grid-cols-2 gap-2">
+                <button aria-label="Quitar uno" onClick={() => cambiar(v.clave, -1)} className="h-14 rounded-xl bg-slate-200 text-4xl font-extrabold active:bg-slate-300">−</button>
+                <button aria-label="Agregar uno" onClick={() => cambiar(v.clave, 1)} className="h-14 rounded-xl bg-marca text-white text-4xl font-extrabold active:bg-marca-osc">+</button>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <button aria-label="Agregar cinco" onClick={() => cambiar(v.clave, 5)} className="h-11 rounded-xl bg-green-600 text-white text-lg font-extrabold active:bg-green-700">+5</button>
+                <button aria-label="Cambiar precio" onClick={() => setPrecios(x => ({ ...x, [v.clave]: p === '8' ? '10' : '8' }))} className="h-11 rounded-xl border-2 border-marca text-marca text-lg font-extrabold bg-white">Q{p}</button>
+              </div>
+              <div className="text-center text-slate-600 font-bold">{dinero(n * num(p))}</div>
             </div>
-            <div className="flex items-center justify-between gap-2">
-              <button aria-label="Quitar uno" onClick={() => cambiar(v.clave, -1)} className="w-16 h-16 rounded-2xl bg-slate-200 text-4xl font-extrabold active:bg-slate-300">−</button>
-              <div className="text-5xl font-extrabold min-w-16 text-center">{n}</div>
-              <button aria-label="Agregar uno" onClick={() => cambiar(v.clave, 1)} className="w-16 h-16 rounded-2xl bg-marca text-white text-4xl font-extrabold active:bg-marca-osc">+</button>
-              <button aria-label="Agregar cinco" onClick={() => cambiar(v.clave, 5)} className="h-16 px-3 rounded-2xl bg-green-600 text-white text-xl font-extrabold active:bg-green-700">+5</button>
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              {['8', '10'].map(p => (
-                <button key={p} onClick={() => setPrecios(x => ({ ...x, [v.clave]: p }))}
-                  className={`min-h-12 rounded-xl text-xl font-extrabold border-2 ${precioDe(v.clave) === p ? 'bg-marca text-white border-marca' : 'bg-white text-slate-900 border-slate-300'}`}>Q{p} c/u</button>
-              ))}
-            </div>
-          </Tarjeta>
-        );
-      })}
+          );
+        })}
+      </div>
+      <p className="text-slate-600 text-center">El botón <b>Q8 / Q10</b> cambia el precio de cada pache de esa clase.</p>
 
       <Campo etiqueta="¿Para cuándo se entrega?"><Entrada type="date" value={entrega} onChange={e => setEntrega(e.target.value)} /></Campo>
       <Campo etiqueta="Nota del pedido (opcional)"><Entrada placeholder="Ej. entregar por la tarde" value={nota} onChange={e => setNota(e.target.value)} /></Campo>
