@@ -13,3 +13,4 @@
 - **"Pagué con"** se captura una vez por venta y se copia a todas sus líneas.
 - **Usuarios:** el ayudante se crea con `npm run db:crear-usuario` (service role) o desde el panel de Supabase → Authentication.
 - **Pendiente / fuera de esta entrega:** edición de líneas de una venta ya guardada (hoy se elimina y se recrea), gráfica de pastel, reseteo de contraseña desde la app.
+- **Moneda:** quetzales (Q), formato `Q1,234.50`; los precios rápidos de paches son Q8 y Q10. WhatsApp: números de 8 dígitos se envían con +502.

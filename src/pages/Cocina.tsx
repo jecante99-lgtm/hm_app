@@ -28,7 +28,7 @@ export default function Cocina() {
       <Tarjeta className="bg-marca text-white border-0">
         <div className="text-lg">Total por preparar</div>
         <div className="text-4xl font-extrabold">{total}</div>
-        <div className="text-xl mt-1">{Object.entries(porPrecio).map(([p, n]) => `${n} a $${Number(p)}`).join(' · ') || '—'}</div>
+        <div className="text-xl mt-1">{Object.entries(porPrecio).map(([p, n]) => `${n} a Q${Number(p)}`).join(' · ') || '—'}</div>
       </Tarjeta>
       <BotonLink to="/entregas" tono="borde">📦 Ver lo que ya está preparado</BotonLink>
 
@@ -37,7 +37,7 @@ export default function Cocina() {
           <b className="text-xl">{c.nombre}</b>
           {c.lineas.map(l => (
             <div key={l.linea_id} className="flex justify-between items-center gap-2 border-t pt-2">
-              <div><div className="font-semibold">{l.cantidad} × {l.descripcion}</div><div className="text-slate-500">a ${Number(l.precio_unitario)} · entrega {fechaCorta(l.fecha_entrega)}</div></div>
+              <div><div className="font-semibold">{l.cantidad} × {l.descripcion}</div><div className="text-slate-500">a Q{Number(l.precio_unitario)} · entrega {fechaCorta(l.fecha_entrega)}</div></div>
               <Boton tono="verde" className="!min-h-12 !px-3" onClick={() => preparar([l.linea_id])}>Listo</Boton>
             </div>
           ))}

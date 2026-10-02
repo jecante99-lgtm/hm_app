@@ -79,7 +79,7 @@ export default function PedidoPaches() {
             <div className="grid grid-cols-2 gap-2">
               {['8', '10'].map(p => (
                 <button key={p} onClick={() => set(i, 'precio', p)}
-                  className={`min-h-16 rounded-2xl text-2xl font-extrabold border-2 ${f.precio === p ? 'bg-marca text-white border-marca' : 'bg-white text-slate-900 border-slate-300'}`}>${p}</button>
+                  className={`min-h-16 rounded-2xl text-2xl font-extrabold border-2 ${f.precio === p ? 'bg-marca text-white border-marca' : 'bg-white text-slate-900 border-slate-300'}`}>Q{p}</button>
               ))}
             </div>
           </div>
@@ -93,8 +93,8 @@ export default function PedidoPaches() {
       <Boton tono="borde" className="w-full" onClick={() => setFilas(fs => [...fs, fila()])}>➕ Otro precio u otra clase</Boton>
 
       <Campo etiqueta="¿Para cuándo se entrega?"><Entrada type="date" value={entrega} onChange={e => setEntrega(e.target.value)} /></Campo>
-      <Campo etiqueta="Me cuesta cada uno (opcional)"><Entrada inputMode="decimal" placeholder="$0.00" value={costo} onChange={e => setCosto(e.target.value)} /></Campo>
-      <Campo etiqueta="¿Dejó adelanto? (opcional)"><Entrada inputMode="decimal" placeholder="$0.00" value={adelanto} onChange={e => setAdelanto(e.target.value)} /></Campo>
+      <Campo etiqueta="Me cuesta cada uno (opcional)"><Entrada inputMode="decimal" placeholder="Q0.00" value={costo} onChange={e => setCosto(e.target.value)} /></Campo>
+      <Campo etiqueta="¿Dejó adelanto? (opcional)"><Entrada inputMode="decimal" placeholder="Q0.00" value={adelanto} onChange={e => setAdelanto(e.target.value)} /></Campo>
 
       <Tarjeta className="bg-slate-50">
         <div className="flex justify-between text-xl"><span>Total de paches</span><b>{piezas}</b></div>

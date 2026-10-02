@@ -1,19 +1,24 @@
-const mxn = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' });
-export const dinero = (n: number | string | null | undefined) => mxn.format(Number(n ?? 0));
+const nf = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+/** Quetzales: Q1,234.50 */
+export const dinero = (n: number | string | null | undefined) => {
+  const v = Number(n ?? 0);
+  return (v < 0 ? '-Q' : 'Q') + nf.format(Math.abs(v));
+};
 export const num = (v: string | number | null | undefined) => {
   const n = Number(String(v ?? '').replace(',', '.'));
   return Number.isFinite(n) ? n : 0;
 };
 export const hoy = () => new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
 export const fechaCorta = (d?: string | null) =>
-  d ? new Date(d + 'T12:00:00').toLocaleDateString('es-MX', { day: 'numeric', month: 'short' }) : '—';
+  d ? new Date(d + 'T12:00:00').toLocaleDateString('es-GT', { day: 'numeric', month: 'short' }) : '—';
 export const mesLargo = (d: string) =>
-  new Date(d + 'T12:00:00').toLocaleDateString('es-MX', { month: 'long', year: 'numeric' });
+  new Date(d + 'T12:00:00').toLocaleDateString('es-GT', { month: 'long', year: 'numeric' });
 export const uuid = () => crypto.randomUUID();
 
 export function whatsappUrl(telefono: string | null | undefined, texto: string) {
   let t = (telefono ?? '').replace(/\D/g, '');
-  if (t.length === 10) t = '52' + t;
+  if (t.length === 8) t = '502' + t; // Guatemala
+  else if (t.length === 10) t = '52' + t;
   return `https://wa.me/${t}?text=${encodeURIComponent(texto)}`;
 }
 

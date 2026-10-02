@@ -7,15 +7,19 @@ export default function Inicio() {
   const { datos, cargando } = useData('inicio', async () => {
     const mes = hoy().slice(0, 7) + '-01';
     const en7 = new Date(Date.now() + 7 * 864e5).toISOString().slice(0, 10);
-    const [saldos, ventas, cocina, entregas, gan] = await Promise.all([
+    const [saldos, ventas, cocina, entregas, gan, abiertas] = await Promise.all([
       q<any[]>(supabase.from('v_saldo_cliente').select('saldo_pendiente')),
       q<any[]>(supabase.from('v_ventas_resumen').select('saldo_pendiente,fecha_promesa_pago').gt('saldo_pendiente', 0).not('fecha_promesa_pago', 'is', null).lte('fecha_promesa_pago', en7)),
       q<any[]>(supabase.from('v_cocina_pendiente').select('cantidad')),
       q<any[]>(supabase.from('v_entregas').select('cantidad')),
       q<any[]>(supabase.from('v_ganancia_por_categoria').select('categoria_nombre,ganancia').eq('mes', mes)),
+      q<any[]>(supabase.from('v_ventas_resumen').select('categoria_nombre,saldo_pendiente').gt('saldo_pendiente', 0)),
     ]);
     const suma = (a: any[], k: string) => a.reduce((s, x) => s + Number(x[k]), 0);
+    const porCat: Record<string, number> = {};
+    abiertas.forEach(v => { porCat[v.categoria_nombre] = (porCat[v.categoria_nombre] ?? 0) + Number(v.saldo_pendiente); });
     return {
+      debeCat: Object.entries(porCat).sort((a, b) => b[1] - a[1]),
       debenTotal: suma(saldos, 'saldo_pendiente'),
       semana: suma(ventas, 'saldo_pendiente'),
       porPreparar: suma(cocina, 'cantidad'),
@@ -32,6 +36,14 @@ export default function Inicio() {
       <Tarjeta className="bg-marca text-white border-0">
         <div className="text-lg">Total que me deben</div>
         <div className="text-4xl font-extrabold">{dinero(d.debenTotal)}</div>
+      </Tarjeta>
+
+      <Tarjeta>
+        <div className="text-slate-600 mb-1">Me deben por categoría</div>
+        {d.debeCat.map(([n, m]: [string, number]) => (
+          <div key={n} className="flex justify-between text-xl py-1"><span>{n}</span><b className="text-red-700">{dinero(m)}</b></div>
+        ))}
+        {!d.debeCat.length && <div className="text-lg text-green-700 font-bold">Nadie te debe 🎉</div>}
       </Tarjeta>
 
       <div className="grid grid-cols-1 gap-3">

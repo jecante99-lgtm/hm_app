@@ -50,7 +50,7 @@ export default function RegistrarPago() {
           {datos?.map(c => <option key={c.cliente_id} value={c.cliente_id}>{c.nombre}{c.saldo_pendiente > 0 ? ` (debe ${dinero(c.saldo_pendiente)})` : ''}</option>)}
         </Selector>
       </Campo>
-      <Campo etiqueta="¿Cuánto pagó?"><Entrada inputMode="decimal" placeholder="$0.00" value={monto} onChange={e => setMonto(e.target.value)} /></Campo>
+      <Campo etiqueta="¿Cuánto pagó?"><Entrada inputMode="decimal" placeholder="Q0.00" value={monto} onChange={e => setMonto(e.target.value)} /></Campo>
       <Campo etiqueta="Fecha"><Entrada type="date" value={fecha} onChange={e => setFecha(e.target.value)} /></Campo>
       <Campo etiqueta="Forma de pago">
         <Selector value={metodo} onChange={e => setMetodo(e.target.value)}>
@@ -68,7 +68,7 @@ export default function RegistrarPago() {
       {manual && abiertas?.map(v => (
         <Tarjeta key={v.venta_id} className="flex items-center justify-between gap-3">
           <div><b>{v.categoria_nombre} · {fechaCorta(v.fecha)}</b><div className="text-red-700">Falta {dinero(v.saldo_pendiente)}</div></div>
-          <Entrada className="!w-32" inputMode="decimal" placeholder="$" value={reparto[v.venta_id] ?? ''} onChange={e => setReparto({ ...reparto, [v.venta_id]: e.target.value })} />
+          <Entrada className="!w-32" inputMode="decimal" placeholder="Q" value={reparto[v.venta_id] ?? ''} onChange={e => setReparto({ ...reparto, [v.venta_id]: e.target.value })} />
         </Tarjeta>
       ))}
 

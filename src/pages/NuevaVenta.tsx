@@ -92,12 +92,12 @@ export default function NuevaVenta() {
           <Campo etiqueta="¿Qué se llevó?"><Entrada placeholder="Ej. Tenis Nike #26 negro" value={l.descripcion} onChange={e => setL(i, 'descripcion', e.target.value)} /></Campo>
           <div className="grid grid-cols-3 gap-2 [&_span]:text-base">
             <Campo etiqueta="Cantidad"><Entrada className="!px-2" inputMode="decimal" value={l.cantidad} onChange={e => setL(i, 'cantidad', e.target.value)} /></Campo>
-            <Campo etiqueta="Me costó"><Entrada className="!px-2" inputMode="decimal" placeholder="$" value={l.costo} onChange={e => setL(i, 'costo', e.target.value)} /></Campo>
-            <Campo etiqueta="Cobro"><Entrada className="!px-2" inputMode="decimal" placeholder="$" value={l.precio} onChange={e => setL(i, 'precio', e.target.value)} /></Campo>
+            <Campo etiqueta="Me costó"><Entrada className="!px-2" inputMode="decimal" placeholder="Q" value={l.costo} onChange={e => setL(i, 'costo', e.target.value)} /></Campo>
+            <Campo etiqueta="Cobro"><Entrada className="!px-2" inputMode="decimal" placeholder="Q" value={l.precio} onChange={e => setL(i, 'precio', e.target.value)} /></Campo>
           </div>
           {esPaches && (
             <div className="grid grid-cols-2 gap-2">
-              {[8, 10].map(p => <Boton key={p} tono={num(l.precio) === p ? 'marca' : 'borde'} onClick={() => setL(i, 'precio', String(p))}>${p}</Boton>)}
+              {[8, 10].map(p => <Boton key={p} tono={num(l.precio) === p ? 'marca' : 'borde'} onClick={() => setL(i, 'precio', String(p))}>Q{p}</Boton>)}
             </div>
           )}
           <div className="flex justify-between items-center">
@@ -125,7 +125,7 @@ export default function NuevaVenta() {
           </Selector>
         </Campo>
       )}
-      <Campo etiqueta="¿Pagó algo ahora? (opcional)"><Entrada inputMode="decimal" placeholder="$0.00" value={pagoInicial} onChange={e => setPagoInicial(e.target.value)} /></Campo>
+      <Campo etiqueta="¿Pagó algo ahora? (opcional)"><Entrada inputMode="decimal" placeholder="Q0.00" value={pagoInicial} onChange={e => setPagoInicial(e.target.value)} /></Campo>
       <Campo etiqueta="¿Cuándo dice que paga? (opcional)"><Entrada type="date" value={promesa} onChange={e => setPromesa(e.target.value)} /></Campo>
       {esPaches && <Campo etiqueta="Fecha de entrega"><Entrada type="date" value={entrega} onChange={e => setEntrega(e.target.value)} /></Campo>}
 
