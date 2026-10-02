@@ -3,15 +3,9 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useData, q, llamar } from '../lib/offline';
 import { dinero, hoy, uuid } from '../lib/format';
+import { Contador, PRECIO, VARIANTES } from '../components/ContadorPaches';
 import ClienteRapido from '../components/ClienteRapido';
 import { Boton, Campo, Entrada, Selector, Tarjeta, Titulo, Aviso } from '../components/ui';
-
-const VARIANTES = [
-  { clave: 'Pollo picante', icono: '🐔🌶️' },
-  { clave: 'Pollo no picante', icono: '🐔' },
-  { clave: 'Cerdo picante', icono: '🐷🌶️' },
-  { clave: 'Cerdo no picante', icono: '🐷' },
-];
 
 export default function PedidoPaches() {
   const nav = useNavigate();
@@ -20,7 +14,6 @@ export default function PedidoPaches() {
   const [cant, setCant] = useState<Record<string, number>>({});
   const [nota, setNota] = useState('');
   const cambiar = (k: string, d: number) => setCant(c => ({ ...c, [k]: Math.max(0, (c[k] ?? 0) + d) }));
-  const PRECIO = 8; // todos los paches cuestan Q8
   const [error, setError] = useState('');
   const [guardando, setGuardando] = useState(false);
 
@@ -71,23 +64,7 @@ export default function PedidoPaches() {
       <ClienteRapido alCrear={async id => { await recargar(); setClienteId(id); }} />
 
       <div className="grid grid-cols-2 gap-2">
-        {VARIANTES.map(v => {
-          const n = cant[v.clave] ?? 0;
-          return (
-            <div key={v.clave} className={`rounded-2xl bg-white p-2 space-y-2 shadow-sm ${n > 0 ? 'border-2 border-marca' : 'border-2 border-slate-200'}`}>
-              <div className="text-center leading-tight">
-                <div className="text-2xl">{v.icono}</div>
-                <div className="font-extrabold">{v.clave}</div>
-              </div>
-              <div className="text-5xl font-extrabold text-center">{n}</div>
-              <div className="grid grid-cols-2 gap-2">
-                <button aria-label="Quitar uno" onClick={() => cambiar(v.clave, -1)} className="h-14 rounded-xl bg-slate-200 text-4xl font-extrabold active:bg-slate-300">−</button>
-                <button aria-label="Agregar uno" onClick={() => cambiar(v.clave, 1)} className="h-14 rounded-xl bg-marca text-white text-4xl font-extrabold active:bg-marca-osc">+</button>
-              </div>
-              <div className="text-center text-slate-600 font-bold">{dinero(n * PRECIO)}</div>
-            </div>
-          );
-        })}
+        {VARIANTES.map(v => <Contador key={v.clave} icono={v.icono} nombre={v.clave} n={cant[v.clave] ?? 0} onCambio={d => cambiar(v.clave, d)} />)}
       </div>
 
       <Campo etiqueta="Nota del pedido (opcional)"><Entrada placeholder="Ej. entregar por la tarde" value={nota} onChange={e => setNota(e.target.value)} /></Campo>

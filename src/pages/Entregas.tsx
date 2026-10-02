@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../lib/auth';
 import { useData, q, llamar } from '../lib/offline';
@@ -30,7 +31,12 @@ export default function Entregas() {
               <div className="text-xl font-semibold">{l.cantidad} × {l.descripcion}</div>
               <div className="text-slate-600">Cobrar {dinero(l.total_a_cobrar_linea)}{l.fecha_entrega ? ` · Entrega ${fechaCorta(l.fecha_entrega)}` : ""}</div>
               <Boton tono="verde" className="w-full !min-h-16 !text-xl" onClick={() => entregar(l.linea_id)}>✔ Marcar entregado</Boton>
-              {esAdmin && <Boton tono="gris" className="w-full" onClick={() => regresar(l.linea_id)}>↩ Regresar a pendiente</Boton>}
+              {esAdmin && (
+                <div className="grid grid-cols-2 gap-2">
+                  <Link to={`/paches/editar/${l.venta_id}`} className="min-h-14 rounded-2xl bg-slate-200 font-bold text-lg flex items-center justify-center">✏️ Modificar</Link>
+                  <Boton tono="gris" onClick={() => regresar(l.linea_id)}>↩ Pendiente</Boton>
+                </div>
+              )}
             </div>
           ))}
         </Tarjeta>

@@ -1,6 +1,7 @@
 import { supabase } from '../lib/supabase';
 import { useData, q, llamar } from '../lib/offline';
 import { fechaCorta } from '../lib/format';
+import { Link } from 'react-router-dom';
 import { Boton, BotonLink, Tarjeta, Titulo, Cargando } from '../components/ui';
 
 export default function Cocina() {
@@ -43,9 +44,12 @@ export default function Cocina() {
         <Tarjeta key={cid} className="space-y-2">
           <b className="text-xl">{c.nombre}</b>
           {c.lineas.map(l => (
-            <div key={l.linea_id} className="flex justify-between items-center gap-2 border-t pt-2">
-              <div><div className="font-semibold">{l.cantidad} × {l.descripcion}</div><div className="text-slate-500">a Q{Number(l.precio_unitario)}{l.fecha_entrega ? ` · entrega ${fechaCorta(l.fecha_entrega)}` : ""}</div></div>
-              <Boton tono="verde" className="!min-h-12 !px-3" onClick={() => preparar([l.linea_id])}>Listo</Boton>
+            <div key={l.linea_id} className="border-t pt-2 space-y-2">
+              <div><div className="font-semibold text-lg">{l.cantidad} × {l.descripcion}</div><div className="text-slate-500">a Q{Number(l.precio_unitario)}{l.fecha_entrega ? ` · entrega ${fechaCorta(l.fecha_entrega)}` : ""}</div></div>
+              <div className="grid grid-cols-2 gap-2">
+                <Link to={`/paches/editar/${l.venta_id}`} className="min-h-12 rounded-2xl bg-slate-200 font-bold text-lg flex items-center justify-center">✏️ Modificar</Link>
+                <Boton tono="verde" className="!min-h-12" onClick={() => preparar([l.linea_id])}>Listo</Boton>
+              </div>
             </div>
           ))}
           {c.lineas.length > 1 && <Boton tono="verde" className="w-full" onClick={() => preparar(c.lineas.map(l => l.linea_id))}>✔ Todo de {c.nombre} listo</Boton>}

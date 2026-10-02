@@ -10,6 +10,7 @@ import NuevaVenta from './pages/NuevaVenta';
 import RegistrarPago from './pages/RegistrarPago';
 import PorCobrar from './pages/PorCobrar';
 import PedidoPaches from './pages/PedidoPaches';
+import EditarPedido from './pages/EditarPedido';
 import Cocina from './pages/Cocina';
 import Entregas from './pages/Entregas';
 import Reportes from './pages/Reportes';
@@ -37,6 +38,7 @@ export default function App() {
         <Route path="/por-cobrar" element={<PorCobrar />} />
         <Route path="/paches" element={<Cocina />} />
         <Route path="/paches/nuevo" element={<PedidoPaches />} />
+        <Route path="/paches/editar/:id" element={<EditarPedido />} />
         <Route path="/entregas" element={<Entregas />} />
         <Route path="/reportes" element={<Reportes />} />
         <Route path="/mas" element={<Mas />} />
