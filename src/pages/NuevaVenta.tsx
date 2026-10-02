@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useData, q, llamar } from '../lib/offline';
@@ -18,7 +18,7 @@ export default function NuevaVenta() {
   const [promesa, setPromesa] = useState('');
   const [entrega, setEntrega] = useState('');
   const [lineas, setLineas] = useState<Linea[]>([vacia()]);
-  const [medio, setMedio] = useState('');
+  const [medio, setMedio] = useState('tarjeta');
   const [tarjetaId, setTarjetaId] = useState('');
   const [pagoInicial, setPagoInicial] = useState('');
   const [error, setError] = useState('');
@@ -32,9 +32,14 @@ export default function NuevaVenta() {
     ]);
     return { clientes, categorias, tarjetas };
   });
+  // Por defecto: pagado con tarjeta, y la primera tarjeta
+  useEffect(() => {
+    if (!tarjetaId && datos?.tarjetas.length) setTarjetaId(datos.tarjetas[0].id);
+  }, [datos, tarjetaId]);
   const cat = datos?.categorias.find(c => c.id === categoriaId);
   const esPaches = Boolean(cat?.genera_pedido);
 
+  const cambiarCant = (i: number, d: number) => setLineas(ls => ls.map((l, j) => (j === i ? { ...l, cantidad: String(Math.max(1, Math.round(num(l.cantidad)) + d)) } : l)));
   const setL = (i: number, k: keyof Linea, v: string) => setLineas(ls => ls.map((l, j) => (j === i ? { ...l, [k]: v } : l)));
   const totPrecio = lineas.reduce((s, l) => s + num(l.cantidad) * num(l.precio), 0);
   const totCosto = lineas.reduce((s, l) => s + num(l.cantidad) * num(l.costo), 0);
@@ -90,10 +95,17 @@ export default function NuevaVenta() {
       {lineas.map((l, i) => (
         <Tarjeta key={i} className="space-y-3">
           <Campo etiqueta="¿Qué se llevó?"><Entrada placeholder="Ej. Tenis Nike #26 negro" value={l.descripcion} onChange={e => setL(i, 'descripcion', e.target.value)} /></Campo>
-          <div className="grid grid-cols-3 gap-2 [&_span]:text-base">
-            <Campo etiqueta="Cantidad"><Entrada className="!px-2" inputMode="decimal" value={l.cantidad} onChange={e => setL(i, 'cantidad', e.target.value)} /></Campo>
-            <Campo etiqueta="Me costó"><Entrada className="!px-2" inputMode="decimal" placeholder="Q" value={l.costo} onChange={e => setL(i, 'costo', e.target.value)} /></Campo>
-            <Campo etiqueta="Cobro"><Entrada className="!px-2" inputMode="decimal" placeholder="Q" value={l.precio} onChange={e => setL(i, 'precio', e.target.value)} /></Campo>
+          <div>
+            <span className="block font-bold mb-1">Cantidad</span>
+            <div className="flex items-center justify-between gap-3">
+              <button aria-label="Quitar uno" onClick={() => cambiarCant(i, -1)} className="w-16 h-16 rounded-2xl bg-slate-200 text-4xl font-extrabold active:bg-slate-300">−</button>
+              <div className="text-5xl font-extrabold min-w-16 text-center">{num(l.cantidad)}</div>
+              <button aria-label="Agregar uno" onClick={() => cambiarCant(i, 1)} className="w-16 h-16 rounded-2xl bg-marca text-white text-4xl font-extrabold active:bg-marca-osc">+</button>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <Campo etiqueta="Me costó"><Entrada inputMode="decimal" placeholder="Q" value={l.costo} onChange={e => setL(i, 'costo', e.target.value)} /></Campo>
+            <Campo etiqueta="Cobro"><Entrada inputMode="decimal" placeholder="Q" value={l.precio} onChange={e => setL(i, 'precio', e.target.value)} /></Campo>
           </div>
           {esPaches && (
             <div className="grid grid-cols-2 gap-2">
@@ -113,7 +125,7 @@ export default function NuevaVenta() {
         <div className="flex justify-between text-green-700 text-xl"><span>Mi ganancia</span><b>{dinero(totPrecio - totCosto)}</b></div>
       </Tarjeta>
 
-      <Campo etiqueta="Pagué con (opcional)">
+      <Campo etiqueta="Pagué con">
         <Selector value={medio} onChange={e => setMedio(e.target.value)}>
           <option value="">—</option><option value="efectivo">Efectivo</option><option value="tarjeta">Tarjeta</option>
         </Selector>
