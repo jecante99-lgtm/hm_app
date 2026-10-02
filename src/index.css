@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+@theme {
+  --color-marca: #0f766e;
+  --color-marca-osc: #115e59;
+}
+
+html { font-size: 20px; }
+body { background: #f8fafc; color: #0f172a; -webkit-tap-highlight-color: transparent; }
+input, select, textarea { font-size: 1rem; }
